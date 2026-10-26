@@ -1,0 +1,5 @@
+node_modules/
+mailbox/
+*.log
+.DS_Store
+Thumbs.db
