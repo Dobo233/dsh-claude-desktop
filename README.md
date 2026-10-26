@@ -34,13 +34,23 @@
 
 `claude://` 协议由应用启动时注册（`HKCU\Software\Classes\claude`），应用里有个开关 `disableDeepLinkRegistration` 可以关掉它。
 
+### 投递 ≠ 发送（实测结论）
+
+`q` 参数只会把文本**预填进输入框**，不会替你按发送键。实测证据：
+
+- 投递后应用写下 `Local Storage\leveldb` 里 `composer-draft` 记录：`{"text":"<你的 prompt>","readyImageCount":0,"textChangedAt":…}` —— 这是草稿，不是已发出的消息。
+- 只按 `Enter`：草稿原封不动留在那里（Claude 的输入框里回车是**换行**）。
+- 按 `Ctrl+Enter`：应用日志出现 `[CCD] session spawn`、`LocalSessions.updateSession: sessionId=local_<uuid>`、`[CCD CycleHealth] healthy cycle … hadFirstResponse=true` —— 这才会真正开跑一轮并拿到回答。
+
+所以 `desktop_send(..., submit=true)` 做的事是：拉起深链 → 把窗口抢到前台 → `SendKeys('^{ENTER}')`。它是**尽力而为**：找不到有主窗口的进程、或 `AppActivate` 抢不到前台时会返回 `ok:false` 并说明原因，不会假装成功。
+
 ---
 
 ## 工具
 
 | 工具 | 作用 | 参数 |
 |---|---|---|
-| `desktop_send` | 投递任务，开新会话并带上 prompt | `prompt`(必填)、`folder`、`files[]`、`surface`=`code`\|`cowork`\|`claude.ai` |
+| `desktop_send` | 投递任务，开新会话并把 prompt 预填进输入框 | `prompt`(必填)、`folder`、`files[]`、`surface`=`code`\|`cowork`\|`claude.ai`、`submit`（尽力代按 Ctrl+Enter） |
 | `desktop_continue` | 把 CLI 会话交回桌面端继续 | `session`=`last` 或 CLI 返回的 UUID |
 | `desktop_open` | 打开面板 / 任意深链 | `entry`=`new-chat`\|`new-code`\|`cowork-new`\|`continue-last`\|`needs-input`\|`agents`\|`memory`\|`hub`\|`settings`，或完整 `claude://…` |
 | `desktop_probe` | 体检：版本、进程、协议注册、配置文件位置、能力边界 | — |
@@ -49,6 +59,7 @@
 
 ```text
 desktop_send(prompt="把 README 的第一段改短一点", folder="E:\\path\\to\\repo")
+desktop_send(prompt="只回复一行 OK", submit=true)   # 连发送键一起替你按
 desktop_continue(session="6bede325-c04e-405a-8681-85a1e060931d")
 desktop_open(entry="needs-input")
 desktop_probe()
@@ -74,6 +85,9 @@ dsh plugin --profile web add <repo-path>
 | `maxPromptChars` | `6000` | prompt 截断长度（应用对 `q` 也有自己的上限） |
 | `protocol` | `"claude"` | 自定义协议名（一般不用改） |
 | `appPackageId` | `"Claude_pzs8sxrjxfjjc"` | 用来定位 `Claude-Data\<pkg>` 数据目录 |
+| `submit` | `false` | 默认不代按发送键；`true` 时投递后自动按一次 Ctrl+Enter |
+| `submitKeys` | `"^{ENTER}"` | 代按时用的 SendKeys 组合（`{ENTER}` 只换行，别改错） |
+| `focusDelayMs` | `1200` | 投递后等多久再抢前台按发送键 |
 
 ---
 
@@ -96,6 +110,8 @@ dsh plugin --profile web add <repo-path>
 | `claude:// 注册: 未注册` | 桌面端没启动过，或应用里开了 `disableDeepLinkRegistration`；手动启动一次应用 |
 | `应用: 未找到` | `Get-AppxPackage -Name '*Claude*'` 查不到；确认装的是 Clash→Claude 桌面版（MSIX 包名 `Claude_pzs8sxrjxfjjc`） |
 | 投递了但没反应 | 应用在后台未响应；先 `desktop_open(entry="new-chat")` 试最轻的入口 |
+| 输入框里有字，但消息没发出去 | 预期行为：深链只预填。按 Ctrl+Enter，或传 `submit=true` 让插件代按 |
+| `submit=true` 但返回「没按成」 | 应用没有带主窗口的进程（在托盘/最小化），或 `AppActivate` 抢不到前台；先手动点开窗口再试 |
 | 新会话没带上 prompt | prompt 太长被应用截断；或 `q` 里的特殊字符被 URL 编码问题吃掉（本插件用 `URLSearchParams` 编码） |
 | 想拿结果回 DSH | 拿不到 —— 用 `dsh-claude-pilot` 的 `claude_run`（走 CLI，能返回文本和 session_id） |
 

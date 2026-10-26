@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.1
+
+- `desktop_send` 新增 `submit`（默认 `false`）：深链只会把文本预填进输入框，回车在输入框里是换行，只有 `Ctrl+Enter` 才真正发送 —— 打开后投递完会把窗口抢到前台代按一次。
+- 新增配置 `submitKeys`（默认 `"^{ENTER}"`）、`focusDelayMs`（默认 `1200`）。
+- 渲染结果区分「已投递」和「发送键按没按成」，不再让人误以为消息已经发出去了。
+
 ## 0.1.0
 
 - `desktop_send`：用 `claude://code/new?q=…&folder=…&file=…` 把任务投递到 Claude 桌面端（code / cowork / claude.ai 三个面）。

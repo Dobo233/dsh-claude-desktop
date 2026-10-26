@@ -1,6 +1,6 @@
 {
   "name": "dsh-claude-desktop",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Drive the Claude desktop app from DSH over claude:// deep links — hand tasks to the app, hand CLI sessions back into it, and see honestly what the app does and does not expose.",
   "keywords": [
     "dsh",
