@@ -2,15 +2,49 @@
   "name": "dsh-claude-desktop",
   "version": "0.1.0",
   "description": "Drive the Claude desktop app from DSH over claude:// deep links — hand tasks to the app, hand CLI sessions back into it, and see honestly what the app does and does not expose.",
-  "keywords": ["dsh", "dsh-plugin", "claude", "claude-desktop", "deep-link", "cordis"],
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "claude",
+    "claude-desktop",
+    "deep-link",
+    "cordis"
+  ],
   "type": "module",
   "main": "lib/index.js",
-  "exports": { ".": "./lib/index.js" },
-  "files": ["lib", "standalone", "cordis.patch.yml", "README.md", "CHANGELOG.md", "LICENSE"],
-  "dsh": { "bundle": { "patch": "./cordis.patch.yml" } },
-  "peerDependencies": { "@deepseek-ai/dsh-tools": ">=0.1.5-rc.1 <0.3.0" },
-  "engines": { "node": "^22.19.0 || >=24.0.0" },
+  "exports": {
+    ".": "./lib/index.js"
+  },
+  "files": [
+    "lib",
+    "standalone",
+    "cordis.patch.yml",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "peerDependencies": {
+    "@deepseek-ai/dsh-tools": ">=0.1.5-rc.1 <0.2.0-0 || >=0.2.0-rc.1 <0.2.1-0 || >=0.2.1-rc.1 <0.3.0"
+  },
+  "engines": {
+    "node": "^22.19.0 || >=24.0.0"
+  },
   "license": "MIT",
-  "author": "OWNER",
-  "repository": { "type": "git", "url": "https://github.com/OWNER/dsh-claude-desktop" }
+  "author": "Dobo233",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Dobo233/dsh-claude-desktop.git"
+  },
+  "homepage": "https://github.com/Dobo233/dsh-claude-desktop#readme",
+  "bugs": {
+    "url": "https://github.com/Dobo233/dsh-claude-desktop/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
 }

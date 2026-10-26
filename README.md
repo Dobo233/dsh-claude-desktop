@@ -60,7 +60,7 @@ desktop_probe()
 
 ```powershell
 # 从 GitHub（不进 npm 也能装）
-dsh plugin --profile web add github:OWNER/dsh-claude-desktop
+dsh plugin --profile web add github:Dobo233/dsh-claude-desktop
 
 # 或本地开发
 dsh plugin --profile web add <repo-path>
